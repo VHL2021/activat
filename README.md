@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Reservas del gimnasio
 
-## Getting Started
+Web para gestionar las clases de un gimnasio: el administrador configura calendario, clases, horario, aforos y socios; los socios reservan sus plazas.
 
-First, run the development server:
+Estado: panel del administrador terminado. La zona de socios es el siguiente paso.
+
+## Qué hay
+
+- **Calendario**: festivos, vacaciones y días cerrados (un día o un rango). Las sesiones de esos días se cancelan solas.
+- **Clases**: nombre, monitor, duración y aforo máximo.
+- **Horario semanal**: cada clase en uno o varios días y a una hora; la web crea las sesiones de cada semana.
+- **Sesiones**: vista por semanas, lista de apuntados y lista de espera, cambiar el aforo, cancelar, apuntar o desapuntar socios, sesiones puntuales y descarga de la lista para Excel.
+- **Socios**: alta con contraseña temporal, edición, desactivar, nueva contraseña, borrado (RGPD) y listado para Excel.
+- **Ajustes**: reglas de reserva que se aplicarán a los socios (antelación, plazos, límites, lista de espera, aforo por defecto).
+
+## Privacidad
+
+- En el repositorio solo hay código. Los datos de los socios están solo en la base de datos del servidor.
+- Las contraseñas se guardan con Argon2 (no se pueden leer). Tras 5 intentos fallidos la cuenta se bloquea 15 minutos.
+- La sesión va en una cookie cifrada, `httpOnly` y solo por HTTPS en producción.
+- Las claves van en `.env.local` (o en las variables del servidor), que nunca se sube al repositorio.
+
+## Puesta en marcha (desarrollo)
+
+Necesitas Node.js 22 y PostgreSQL.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local      # y rellena DATABASE_URL y SESSION_PASSWORD
+npm run db:migrate              # crea las tablas
+npm run create-admin -- tu@email.com "Tu nombre" una-contraseña
+npm run seed:demo               # opcional: datos inventados para probar
+npm run dev                     # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tecnología
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 16 (TypeScript), PostgreSQL con `pg`, `iron-session` para la sesión, `@node-rs/argon2` para las contraseñas y Tailwind CSS.
