@@ -71,3 +71,12 @@ CREATE TABLE IF NOT EXISTS settings (
   key   TEXT PRIMARY KEY,
   value JSONB NOT NULL
 );
+
+-- Enlaces para recuperar la contraseña. Solo se guarda el hash del enlace, nunca el enlace.
+CREATE TABLE IF NOT EXISTS password_resets (
+  id          SERIAL PRIMARY KEY,
+  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  token_hash  TEXT NOT NULL UNIQUE,
+  expires_at  TIMESTAMPTZ NOT NULL,
+  used_at     TIMESTAMPTZ
+);

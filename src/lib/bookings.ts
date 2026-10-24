@@ -2,6 +2,7 @@ import "server-only";
 import type { PoolClient } from "pg";
 import { transaction } from "./db";
 import { TIME_ZONE } from "./dates";
+import { notifyPromoted } from "./notifications";
 import { promoteWaitlist } from "./schedule";
 import { getSettings, type Settings } from "./settings";
 
@@ -106,7 +107,7 @@ async function cancel(client: PoolClient, settings: Settings, userId: number, se
     }
   }
   await client.query("UPDATE bookings SET status = 'cancelled', updated_at = now() WHERE id = $1", [booking.id]);
-  if (booking.status === "booked") await promoteWaitlist(sessionId, client);
+  return booking.status === "booked" ? promoteWaitlist(sessionId, client) : [];
 }
 
 export async function bookSession(userId: number, sessionId: number) {
@@ -116,16 +117,19 @@ export async function bookSession(userId: number, sessionId: number) {
 
 export async function cancelBooking(userId: number, sessionId: number) {
   const settings = await getSettings();
-  await transaction((client) => cancel(client, settings, userId, sessionId));
+  const promoted = await transaction((client) => cancel(client, settings, userId, sessionId));
+  notifyPromoted(sessionId, promoted);
 }
 
 // Cambiar de clase: se desapunta de una y se apunta a otra a la vez. Si algo falla, no cambia nada.
 export async function switchBooking(userId: number, fromSessionId: number, toSessionId: number) {
   const settings = await getSettings();
-  return transaction(async (client) => {
-    await cancel(client, settings, userId, fromSessionId);
-    return book(client, settings, userId, toSessionId, true);
+  const { promoted, status } = await transaction(async (client) => {
+    const promoted = await cancel(client, settings, userId, fromSessionId);
+    return { promoted, status: await book(client, settings, userId, toSessionId, true) };
   });
+  notifyPromoted(fromSessionId, promoted);
+  return status;
 }
 
 export function formatMinutes(minutes: number) {

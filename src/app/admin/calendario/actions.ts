@@ -6,6 +6,7 @@ import type { ActionState } from "@/components/action-form";
 import { requireAdmin } from "@/lib/auth";
 import { query, transaction } from "@/lib/db";
 import { firstError, optionalText } from "@/lib/forms";
+import { notifySessionsCancelled } from "@/lib/notifications";
 
 const closedDaysSchema = z
   .object({
@@ -30,15 +31,16 @@ export async function addClosedDays(_: ActionState, formData: FormData): Promise
        ON CONFLICT (day) DO UPDATE SET kind = EXCLUDED.kind, reason = EXCLUDED.reason`,
       [from, to, kind, reason],
     );
-    const sessions = await client.query<{ bookings: number }>(
+    const sessions = await client.query<{ id: number; bookings: number }>(
       `UPDATE sessions SET cancelled = TRUE, cancel_reason = 'closed'
        WHERE day BETWEEN $1 AND $2 AND NOT cancelled
-       RETURNING (SELECT count(*)::int FROM bookings b WHERE b.session_id = sessions.id AND b.status <> 'cancelled') AS bookings`,
+       RETURNING id, (SELECT count(*)::int FROM bookings b WHERE b.session_id = sessions.id AND b.status <> 'cancelled') AS bookings`,
       [from, to],
     );
     const affected = sessions.rows.reduce((sum, row) => sum + row.bookings, 0);
-    return { days: days.rowCount ?? 0, sessions: sessions.rowCount ?? 0, affected };
+    return { days: days.rowCount ?? 0, sessions: sessions.rowCount ?? 0, affected, ids: sessions.rows.map((r) => r.id) };
   });
+  notifySessionsCancelled(result.ids);
 
   revalidatePath("/admin", "layout");
   let message = `Guardado: ${result.days} día(s) cerrado(s).`;

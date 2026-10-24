@@ -2,7 +2,7 @@
 
 Web para gestionar las clases de un gimnasio: el administrador configura calendario, clases, horario, aforos y socios; los socios reservan sus plazas.
 
-Estado: panel del administrador y zona de socios terminados. Falta la puesta en marcha (servidor, dominio y envío de emails).
+Estado: panel del administrador y zona de socios terminados. Falta la puesta en marcha (servidor y dominio).
 
 ## Qué hay
 
@@ -21,6 +21,12 @@ Estado: panel del administrador y zona de socios terminados. Falta la puesta en 
 - **Mis clases**: desapuntarse (dentro del plazo) o cambiar a otra clase con hueco en un solo paso.
 - **Mi cuenta**: cambiar la contraseña y el teléfono, y descargar sus datos (RGPD).
 - Se aplican las reglas de Ajustes: antelación, cierre de reservas, plazo para desapuntarse, límites por socio y por día y lista de espera. Si alguien deja una plaza, entra el primero de la lista de espera.
+
+### Emails
+
+- Recuperar la contraseña con un enlace que vale 60 minutos y solo se puede usar una vez.
+- Aviso al socio que pasa de la lista de espera a la clase, y a los apuntados cuando se cancela una clase o se cierra un día.
+- Se envían con [Brevo](https://www.brevo.com) (`BREVO_API_KEY`). Sin clave, en desarrollo se muestran en la consola.
 
 ## Privacidad
 

@@ -6,6 +6,7 @@ import type { ActionState } from "@/components/action-form";
 import { requireAdmin } from "@/lib/auth";
 import { queryOne, transaction } from "@/lib/db";
 import { firstError, intField } from "@/lib/forms";
+import { notifyPromoted, notifySessionsCancelled } from "@/lib/notifications";
 import { promoteWaitlist } from "@/lib/schedule";
 
 const oneOffSchema = z.object({
@@ -39,6 +40,7 @@ export async function updateCapacity(_: ActionState, formData: FormData): Promis
     await client.query("UPDATE sessions SET capacity = $2 WHERE id = $1", [id, parsed.data]);
     return promoteWaitlist(id, client);
   });
+  notifyPromoted(id, promoted);
   revalidatePath("/admin", "layout");
   return {
     ok: promoted.length
@@ -55,7 +57,7 @@ export async function setSessionCancelled(formData: FormData) {
     "UPDATE sessions SET cancelled = $2, cancel_reason = CASE WHEN $2 THEN 'manual' END WHERE id = $1",
     [id, cancelled],
   );
-  // TODO (paso 3): avisar por email a los apuntados cuando se cancela una sesión.
+  if (cancelled) notifySessionsCancelled([id]);
   revalidatePath("/admin", "layout");
 }
 
@@ -97,12 +99,14 @@ export async function addParticipant(_: ActionState, formData: FormData): Promis
 export async function removeParticipant(formData: FormData) {
   await requireAdmin();
   const bookingId = Number(formData.get("booking_id"));
-  await transaction(async (client) => {
+  const result = await transaction(async (client) => {
     const { rows } = await client.query<{ session_id: number }>(
       "UPDATE bookings SET status = 'cancelled', updated_at = now() WHERE id = $1 RETURNING session_id",
       [bookingId],
     );
-    if (rows[0]) await promoteWaitlist(rows[0].session_id, client);
+    if (!rows[0]) return null;
+    return { sessionId: rows[0].session_id, promoted: await promoteWaitlist(rows[0].session_id, client) };
   });
+  if (result) notifyPromoted(result.sessionId, result.promoted);
   revalidatePath("/admin", "layout");
 }

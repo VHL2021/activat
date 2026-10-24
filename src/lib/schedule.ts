@@ -41,6 +41,5 @@ export async function promoteWaitlist(sessionId: number, client: PoolClient | ty
      RETURNING user_id`,
     [sessionId, free],
   );
-  // TODO (paso 3): avisar por email a los socios que pasan de la lista de espera a la clase.
   return promoted.rows.map((row) => row.user_id);
 }
