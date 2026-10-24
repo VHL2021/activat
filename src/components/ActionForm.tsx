@@ -35,8 +35,8 @@ export function ActionForm({ action, onDone, children, className, resetOnSuccess
       <fieldset disabled={pending} className="contents">
         {children}
       </fieldset>
-      {message?.error && <p className="mt-2 text-sm text-red-700" role="alert">{message.error}</p>}
-      {message?.ok && <p className="mt-2 text-sm text-emerald-700">{message.ok}</p>}
+      {message?.error && <p className="col-span-full mt-3 text-sm font-medium text-danger" role="alert">{message.error}</p>}
+      {message?.ok && <p className="notice col-span-full mt-3" role="status">{message.ok}</p>}
     </form>
   );
 }
@@ -58,7 +58,7 @@ export function ActionButton({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   return (
-    <span className="inline-flex flex-col items-end">
+    <span className="inline-flex flex-col items-start sm:items-end">
       <button
         type="button"
         className={className}
@@ -79,15 +79,15 @@ export function ActionButton({
       >
         {children}
       </button>
-      {error && <span className="mt-1 max-w-xs text-right text-xs text-red-700" role="alert">{error}</span>}
+      {error && <span className="mt-1 max-w-xs text-xs text-danger sm:text-right" role="alert">{error}</span>}
     </span>
   );
 }
 
 export function ErrorBox({ error }: { error: string | null }) {
-  return error ? <p className="rounded-md bg-red-50 px-4 py-2 text-sm text-red-800">{error}</p> : null;
+  return error ? <p className="rounded-xl border-l-4 border-danger bg-danger-tint px-4 py-3 text-sm text-danger" role="alert">{error}</p> : null;
 }
 
 export function Loading() {
-  return <p className="text-sm text-slate-500">Cargando…</p>;
+  return <p className="animate-pulse text-sm text-muted">Cargando…</p>;
 }

@@ -1,9 +1,11 @@
 import { Link } from "react-router";
 import { ErrorBox, Loading } from "../../components/ActionForm";
-import { addDays, formatDate, formatTime, todayISO } from "../../lib/dates";
+import { PageHeader } from "../../components/Brand";
+import { addDays, formatDate, todayISO } from "../../lib/dates";
 import { must, rpc, supabase } from "../../lib/supabase";
 import type { SessionOverview } from "../../lib/types";
 import { useData } from "../../lib/useData";
+import { SessionRow } from "./SessionRow";
 
 export function Inicio() {
   const today = todayISO();
@@ -32,47 +34,43 @@ export function Inicio() {
   if (!data) return <Loading />;
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Inicio</h1>
-      <div className="grid gap-3 sm:grid-cols-3">
+    <div className="space-y-8">
+      <PageHeader title="Inicio" lead={`${formatDate(today)}.`} />
+
+      <dl className="flex flex-wrap gap-x-10 gap-y-4 border-y border-line py-4">
         {data.stats.map((stat) => (
-          <Link key={stat.label} to={stat.to} className="card block hover:border-emerald-600">
-            <div className="text-sm text-slate-600">{stat.label}</div>
-            <div className="text-3xl font-semibold">{stat.value}</div>
+          <Link key={stat.label} to={stat.to} className="group flex items-baseline gap-2.5">
+            <dd className="time text-4xl leading-none">{stat.value}</dd>
+            <dt className="text-sm font-medium text-muted group-hover:text-ink">{stat.label}</dt>
           </Link>
         ))}
-      </div>
+      </dl>
+
       {data.nextClosed && (
-        <p className="rounded-md bg-amber-50 px-4 py-2 text-sm text-amber-800">
+        <p className="notice-warn">
           Próximo día cerrado: {formatDate(data.nextClosed.day)}
           {data.nextClosed.reason ? ` (${data.nextClosed.reason})` : ""}
         </p>
       )}
-      {[today, tomorrow].map((day) => {
-        const sessions = data.sessions.filter((s) => s.day === day);
-        return (
-          <section key={day} className="card">
-            <h2 className="mb-2 font-semibold">{day === today ? "Hoy" : "Mañana"}, {formatDate(day).toLowerCase()}</h2>
-            {sessions.length === 0 ? (
-              <p className="text-sm text-slate-500">Sin sesiones.</p>
-            ) : (
-              <ul className="divide-y divide-slate-100">
-                {sessions.map((s) => (
-                  <li key={s.id}>
-                    <Link
-                      to={`/admin/sesiones/${s.id}`}
-                      className={`flex justify-between py-2 text-sm hover:text-emerald-700 ${s.cancelled ? "text-slate-400 line-through" : ""}`}
-                    >
-                      <span><span className="font-medium">{formatTime(s.start_time)}</span> · {s.class_name}</span>
-                      <span>{s.booked} / {s.capacity}{s.waitlist > 0 ? ` (+${s.waitlist})` : ""}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        );
-      })}
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        {[today, tomorrow].map((day) => {
+          const sessions = data.sessions.filter((s) => s.day === day);
+          return (
+            <section key={day} className="card">
+              <h2 className="section-title">{day === today ? "Hoy" : "Mañana"}</h2>
+              <p className="text-sm text-muted">{formatDate(day)}</p>
+              {sessions.length === 0 ? (
+                <p className="mt-4 text-sm text-muted">No hay sesiones.</p>
+              ) : (
+                <ul className="mt-2 divide-y divide-line-soft">
+                  {sessions.map((s) => <SessionRow key={s.id} s={s} />)}
+                </ul>
+              )}
+            </section>
+          );
+        })}
+      </div>
     </div>
   );
 }

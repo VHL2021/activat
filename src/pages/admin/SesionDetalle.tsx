@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router";
 import { ActionButton, ActionForm, ErrorBox, Loading } from "../../components/ActionForm";
+import { CapacityMeter } from "../../components/Brand";
 import { downloadCsv } from "../../lib/csv";
 import { formatDate, formatTime, mondayOf } from "../../lib/dates";
 import { intField, must, rpc, supabase } from "../../lib/supabase";
@@ -41,17 +42,17 @@ export function SesionDetalle() {
 
   return (
     <div className="space-y-6">
-      <Link className="link text-sm" to={`/admin/sesiones?semana=${mondayOf(session.day)}`}>← Volver a la semana</Link>
+      <Link className="back-link" to={`/admin/sesiones?semana=${mondayOf(session.day)}`}>← Semana</Link>
 
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">{session.class_name}</h1>
-          <p className="text-slate-600">
-            {formatDate(session.day, { year: "numeric" })} · {formatTime(session.start_time)} · {session.duration_min} min
-            {session.instructor ? ` · ${session.instructor}` : ""}
+          <h1 className="page-title">{session.class_name}</h1>
+          <p className="page-lead">
+            {formatDate(session.day, { year: "numeric" })}, a las {formatTime(session.start_time)}.{" "}
+            {session.duration_min} min{session.instructor ? ` con ${session.instructor}` : ""}.
           </p>
           {session.cancelled && (
-            <p className="mt-1 font-medium text-red-700">
+            <p className="mt-1 font-medium text-danger">
               Sesión cancelada{session.cancel_reason === "closed" ? " (día cerrado en el calendario)" : ""}
             </p>
           )}
@@ -104,8 +105,11 @@ export function SesionDetalle() {
             <input className="input w-28" id="capacity" name="capacity" type="number" min={1} defaultValue={session.capacity} key={session.capacity} />
           </div>
           <button className="btn-secondary" type="submit">Guardar aforo</button>
-          <span className="pb-2 text-sm text-slate-600">
-            {booked.length} apuntados · {Math.max(session.capacity - booked.length, 0)} plazas libres
+          <span className="flex flex-col gap-1.5 pb-1 md:ml-auto md:items-end">
+            <CapacityMeter capacity={session.capacity} booked={booked.length} />
+            <span className="text-sm text-muted">
+              <span className="font-semibold text-ink">{booked.length} apuntados</span>, {Math.max(session.capacity - booked.length, 0)} plazas libres
+            </span>
           </span>
         </ActionForm>
       </section>
@@ -115,8 +119,8 @@ export function SesionDetalle() {
 
       {!session.cancelled && (
         <section className="card">
-          <h2 className="mb-4 font-semibold">Apuntar a un socio</h2>
-          {candidates.length === 0 ? <p className="text-sm text-slate-600">No hay más socios activos para apuntar.</p> : (
+          <h2 className="section-title mb-4">Apuntar a un socio</h2>
+          {candidates.length === 0 ? <p className="text-sm text-muted">No hay más socios activos para apuntar.</p> : (
             <ActionForm
               onDone={reload}
               className="flex flex-wrap items-end gap-3"
@@ -150,8 +154,8 @@ function ParticipantTable({ title, rows, onRemove, numbered }: {
 }) {
   return (
     <section className="card overflow-x-auto">
-      <h2 className="mb-3 font-semibold">{title}</h2>
-      {rows.length === 0 ? <p className="text-sm text-slate-600">Nadie todavía.</p> : (
+      <h2 className="section-title mb-3">{title}</h2>
+      {rows.length === 0 ? <p className="text-sm text-muted">Nadie todavía.</p> : (
         <table className="table">
           <thead>
             <tr>{numbered && <th>#</th>}<th>Nombre</th><th>Email</th><th>Teléfono</th>{onRemove && <th></th>}</tr>

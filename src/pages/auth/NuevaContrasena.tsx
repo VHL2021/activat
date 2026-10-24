@@ -8,11 +8,11 @@ export function NuevaContrasena() {
   const { session, loading } = useAuth();
   const navigate = useNavigate();
 
-  if (loading) return <AuthCard title="Nueva contraseña"><p className="text-sm text-slate-500">Cargando…</p></AuthCard>;
+  if (loading) return <AuthCard title="Nueva contraseña"><p className="text-sm text-muted">Cargando…</p></AuthCard>;
   if (!session) {
     return (
       <AuthCard title="Nueva contraseña">
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-muted">
           Este enlace ha caducado o ya se ha usado. <Link className="link" to="/recuperar">Pide uno nuevo</Link>.
         </p>
       </AuthCard>
@@ -22,7 +22,7 @@ export function NuevaContrasena() {
   return (
     <AuthCard title="Nueva contraseña">
       <ActionForm
-        className="space-y-4"
+        className="grid gap-4"
         action={async (data) => {
           const password = String(data.get("password"));
           if (password !== data.get("repeat")) throw new Error("Las dos contraseñas no coinciden.");
@@ -39,7 +39,7 @@ export function NuevaContrasena() {
           <label className="label" htmlFor="repeat">Repítela</label>
           <input className="input" id="repeat" name="repeat" type="password" autoComplete="new-password" required />
         </div>
-        <button className="btn w-full" type="submit">Guardar contraseña</button>
+        <button className="btn mt-2 w-full" type="submit">Guardar contraseña</button>
       </ActionForm>
     </AuthCard>
   );
