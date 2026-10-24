@@ -37,3 +37,9 @@ export function formatDate(iso: string, options: Intl.DateTimeFormatOptions = {}
 }
 
 export const formatTime = (time: string) => time.slice(0, 5);
+
+export function formatMinutes(minutes: number) {
+  if (minutes > 0 && minutes % 1440 === 0) return `${minutes / 1440} día(s)`;
+  if (minutes > 0 && minutes % 60 === 0) return `${minutes / 60} hora(s)`;
+  return `${minutes} minutos`;
+}
