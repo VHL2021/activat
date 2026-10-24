@@ -24,6 +24,9 @@ export default async function LoginPage() {
           </div>
           <button className="btn w-full" type="submit">Entrar</button>
         </ActionForm>
+        <p className="mt-4 text-center text-xs text-slate-500">
+          ¿Has olvidado tu contraseña? Pídele una nueva al gimnasio.
+        </p>
       </div>
     </main>
   );

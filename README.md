@@ -2,9 +2,11 @@
 
 Web para gestionar las clases de un gimnasio: el administrador configura calendario, clases, horario, aforos y socios; los socios reservan sus plazas.
 
-Estado: panel del administrador terminado. La zona de socios es el siguiente paso.
+Estado: panel del administrador y zona de socios terminados. Falta la puesta en marcha (servidor, dominio y envío de emails).
 
 ## Qué hay
+
+### Panel del administrador
 
 - **Calendario**: festivos, vacaciones y días cerrados (un día o un rango). Las sesiones de esos días se cancelan solas.
 - **Clases**: nombre, monitor, duración y aforo máximo.
@@ -12,6 +14,13 @@ Estado: panel del administrador terminado. La zona de socios es el siguiente pas
 - **Sesiones**: vista por semanas, lista de apuntados y lista de espera, cambiar el aforo, cancelar, apuntar o desapuntar socios, sesiones puntuales y descarga de la lista para Excel.
 - **Socios**: alta con contraseña temporal, edición, desactivar, nueva contraseña, borrado (RGPD) y listado para Excel.
 - **Ajustes**: reglas de reserva que se aplicarán a los socios (antelación, plazos, límites, lista de espera, aforo por defecto).
+
+### Zona de socios
+
+- **Horario**: clases de los próximos días con las plazas libres; apuntarse o entrar en la lista de espera.
+- **Mis clases**: desapuntarse (dentro del plazo) o cambiar a otra clase con hueco en un solo paso.
+- **Mi cuenta**: cambiar la contraseña y el teléfono, y descargar sus datos (RGPD).
+- Se aplican las reglas de Ajustes: antelación, cierre de reservas, plazo para desapuntarse, límites por socio y por día y lista de espera. Si alguien deja una plaza, entra el primero de la lista de espera.
 
 ## Privacidad
 
