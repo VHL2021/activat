@@ -39,8 +39,8 @@ export function Socios() {
     <div className="space-y-6">
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Socios</h1>
-          <p className="text-sm text-slate-600">{data.profiles.length} cuenta(s), {data.invitations.length} pendiente(s) de crear cuenta</p>
+          <h1 className="page-title">Socios</h1>
+          <p className="page-lead">{data.profiles.length} cuenta(s), {data.invitations.length} pendiente(s) de crear cuenta</p>
         </div>
         <button
           className="btn-secondary"
@@ -55,8 +55,8 @@ export function Socios() {
       </div>
 
       <section className="card">
-        <h2 className="mb-1 font-semibold">Dar de alta</h2>
-        <p className="mb-4 text-sm text-slate-600">
+        <h2 className="section-title mb-1">Dar de alta</h2>
+        <p className="mb-4 text-sm text-muted">
           Después, la persona crea su cuenta con ese mismo email en <span className="font-medium">{siteUrl("/registro")}</span> y
           elige su propia contraseña. Nadie más la conoce.
         </p>
@@ -98,7 +98,7 @@ export function Socios() {
 
       {data.invitations.length > 0 && (
         <section className="card overflow-x-auto">
-          <h2 className="mb-3 font-semibold">Pendientes de crear su cuenta</h2>
+          <h2 className="section-title mb-3">Pendientes de crear su cuenta</h2>
           <table className="table">
             <thead><tr><th>Nombre</th><th>Email</th><th>Perfil</th><th></th></tr></thead>
             <tbody>
@@ -136,7 +136,7 @@ export function Socios() {
             <thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Perfil</th><th>Próximas reservas</th><th></th></tr></thead>
             <tbody>
               {profiles.map((p) => (
-                <tr key={p.id} className={p.active ? "" : "text-slate-400"}>
+                <tr key={p.id} className={p.active ? "" : "text-faint"}>
                   <td className="font-medium">{p.name}{!p.active && " (desactivado)"}</td>
                   <td>{p.email}</td>
                   <td>{p.phone}</td>
@@ -180,10 +180,10 @@ export function SocioDetalle() {
 
   return (
     <div className="space-y-6">
-      <Link className="link text-sm" to="/admin/socios">← Volver a socios</Link>
+      <Link className="back-link" to="/admin/socios">← Socios</Link>
       <div>
-        <h1 className="text-2xl font-semibold">{member.name}</h1>
-        <p className="text-sm text-slate-600">{member.email}</p>
+        <h1 className="page-title">{member.name}</h1>
+        <p className="page-lead">{member.email}</p>
       </div>
 
       <section className="card">
@@ -224,8 +224,8 @@ export function SocioDetalle() {
       </section>
 
       <section className="card">
-        <h2 className="mb-1 font-semibold">Contraseña</h2>
-        <p className="mb-3 text-sm text-slate-600">
+        <h2 className="section-title mb-1">Contraseña</h2>
+        <p className="mb-3 text-sm text-muted">
           Las contraseñas están cifradas y nadie puede verlas. Puedes enviarle un email para que elija una nueva.
         </p>
         <ActionForm
@@ -239,8 +239,8 @@ export function SocioDetalle() {
       </section>
 
       <section className="card overflow-x-auto">
-        <h2 className="mb-3 font-semibold">Reservas (últimos 30 días y futuras)</h2>
-        {data.bookings.length === 0 ? <p className="text-sm text-slate-600">Sin reservas.</p> : (
+        <h2 className="section-title mb-3">Reservas (últimos 30 días y futuras)</h2>
+        {data.bookings.length === 0 ? <p className="text-sm text-muted">Sin reservas.</p> : (
           <table className="table">
             <thead><tr><th>Fecha</th><th>Hora</th><th>Clase</th><th>Estado</th></tr></thead>
             <tbody>
@@ -259,8 +259,8 @@ export function SocioDetalle() {
 
       {!isSelf && (
         <section className="card">
-          <h2 className="mb-1 font-semibold">Borrar cuenta</h2>
-          <p className="mb-3 text-sm text-slate-600">
+          <h2 className="section-title mb-1">Borrar cuenta</h2>
+          <p className="mb-3 text-sm text-muted">
             Borra la cuenta y todas sus reservas de forma definitiva (por ejemplo, si el socio pide que se borren sus
             datos). Si solo deja el gimnasio, mejor desactívala.
           </p>

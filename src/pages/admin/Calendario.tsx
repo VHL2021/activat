@@ -18,14 +18,14 @@ export function Calendario() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Calendario</h1>
-        <p className="text-sm text-slate-600">
+        <h1 className="page-title">Calendario</h1>
+        <p className="page-lead">
           Los días cerrados no tienen clases. Si ya había sesiones ese día, se cancelan automáticamente.
         </p>
       </div>
 
       <section className="card">
-        <h2 className="mb-4 font-semibold">Marcar días cerrados</h2>
+        <h2 className="section-title mb-4">Marcar días cerrados</h2>
         <ActionForm
           resetOnSuccess
           onDone={reload}
@@ -66,14 +66,14 @@ export function Calendario() {
 
       <section className="card">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-semibold">{includePast ? "Todos los días cerrados" : "Próximos días cerrados"}</h2>
+          <h2 className="section-title">{includePast ? "Todos los días cerrados" : "Próximos días cerrados"}</h2>
           <button className="link text-sm" type="button" onClick={() => setIncludePast(!includePast)}>
             {includePast ? "Ver solo los próximos" : "Ver también los pasados"}
           </button>
         </div>
         <ErrorBox error={error} />
         {!days ? <Loading /> : days.length === 0 ? (
-          <p className="text-sm text-slate-600">No hay días cerrados.</p>
+          <p className="text-sm text-muted">No hay días cerrados.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="table">

@@ -57,12 +57,12 @@ export function useAuth() {
 // Muestra la página solo a quien tenga sesión (y, si se pide, perfil de administrador).
 export function RequireUser({ admin, children }: { admin?: boolean; children: ReactNode }) {
   const { session, profile, loading } = useAuth();
-  if (loading) return <p className="p-8 text-center text-slate-500">Cargando…</p>;
+  if (loading) return <p className="p-8 text-center text-muted">Cargando…</p>;
   if (!session) return <Navigate to="/login" replace />;
   if (!profile) {
     return (
       <div className="mx-auto max-w-sm p-8 text-center">
-        <p className="mb-4 text-slate-700">Tu cuenta está desactivada. Habla con el gimnasio.</p>
+        <p className="mb-4 text-ink-soft">Tu cuenta está desactivada. Habla con el gimnasio.</p>
         <button className="btn-secondary" onClick={() => supabase.auth.signOut()}>Salir</button>
       </div>
     );

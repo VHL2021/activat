@@ -1,9 +1,10 @@
 import { Link, useSearchParams } from "react-router";
 import { ActionForm, ErrorBox, Loading } from "../../components/ActionForm";
-import { addDays, formatDate, formatTime, mondayOf, todayISO } from "../../lib/dates";
+import { addDays, formatDate, mondayOf, todayISO } from "../../lib/dates";
 import { must, rpc, supabase } from "../../lib/supabase";
 import type { ClosedDay, SessionOverview } from "../../lib/types";
 import { useData } from "../../lib/useData";
+import { SessionRow } from "./SessionRow";
 
 export function Sesiones() {
   const [params] = useSearchParams();
@@ -33,8 +34,8 @@ export function Sesiones() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Sesiones</h1>
-          <p className="text-sm text-slate-600">
+          <h1 className="page-title">Sesiones</h1>
+          <p className="page-lead">
             Semana del {formatDate(monday, { weekday: undefined })} al {formatDate(sunday, { weekday: undefined, year: "numeric" })}
           </p>
         </div>
@@ -48,42 +49,27 @@ export function Sesiones() {
       <ErrorBox error={error} />
       {!data ? <Loading /> : (
         <>
-          <div className="space-y-4">
+          <div className="divide-y divide-line rounded-2xl border border-line bg-surface">
             {days.map((day) => {
               const sessions = data.sessions.filter((s) => s.day === day);
               const closed = data.closed.find((c) => c.day === day);
+              const isToday = day === today;
               return (
-                <section key={day} className={`card ${day === today ? "ring-2 ring-emerald-600" : ""}`}>
-                  <h2 className="mb-2 font-semibold">
-                    {formatDate(day)}
-                    {closed && (
-                      <span className="ml-2 rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
-                        Cerrado{closed.reason ? `: ${closed.reason}` : ""}
-                      </span>
-                    )}
+                <section key={day} aria-label={formatDate(day)} className="grid gap-x-6 px-5 py-1 sm:grid-cols-[6rem_1fr]">
+                  <h2 className={`flex items-baseline gap-2 py-3 sm:flex-col sm:gap-0 ${sessions.length ? "" : "text-faint"}`}>
+                    <span className="text-sm font-semibold capitalize">{isToday ? "Hoy" : formatDate(day, { day: undefined, month: undefined })}</span>
+                    <span className={`time text-3xl leading-none ${isToday ? "text-brand" : ""}`}>{Number(day.slice(8))}</span>
                   </h2>
-                  {sessions.length === 0 ? <p className="text-sm text-slate-500">Sin sesiones</p> : (
-                    <div className="overflow-x-auto">
-                      <table className="table">
-                        <tbody>
-                          {sessions.map((s) => (
-                            <tr key={s.id} className={s.cancelled ? "text-slate-400 line-through" : ""}>
-                              <td className="w-20 font-medium">{formatTime(s.start_time)}</td>
-                              <td>{s.class_name}</td>
-                              <td className="hidden text-slate-600 sm:table-cell">{s.instructor}</td>
-                              <td className="w-40 whitespace-nowrap">
-                                <span className={s.booked >= s.capacity ? "font-medium text-red-700" : ""}>{s.booked}/{s.capacity} plazas</span>
-                                {s.waitlist > 0 && <span className="block text-xs text-amber-700">+{s.waitlist} en espera</span>}
-                              </td>
-                              <td className="w-28 whitespace-nowrap text-right">
-                                <Link className="btn-secondary" to={`/admin/sesiones/${s.id}`}>Ver lista</Link>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                  <div className="self-center">
+                    {closed && <p className="tag my-2 bg-brand-tint text-brand-text">Cerrado{closed.reason ? `: ${closed.reason}` : ""}</p>}
+                    {sessions.length === 0 ? (
+                      !closed && <p className="pb-3 text-sm text-faint sm:py-3">Sin sesiones</p>
+                    ) : (
+                      <ul className="divide-y divide-line-soft">
+                        {sessions.map((s) => <SessionRow key={s.id} s={s} />)}
+                      </ul>
+                    )}
+                  </div>
                 </section>
               );
             })}
@@ -91,8 +77,8 @@ export function Sesiones() {
 
           {data.classes.length > 0 && (
             <section className="card">
-              <h2 className="mb-1 font-semibold">Sesión puntual</h2>
-              <p className="mb-4 text-sm text-slate-600">Para una clase extra que no está en el horario semanal.</p>
+              <h2 className="section-title mb-1">Sesión puntual</h2>
+              <p className="mb-4 text-sm text-muted">Para una clase extra que no está en el horario semanal.</p>
               <ActionForm
                 resetOnSuccess
                 onDone={reload}

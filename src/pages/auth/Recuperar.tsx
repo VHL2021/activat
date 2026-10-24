@@ -6,9 +6,9 @@ import { AuthCard } from "./AuthCard";
 export function Recuperar() {
   return (
     <AuthCard title="Recuperar contraseña">
-      <p className="mb-4 text-sm text-slate-600">Te enviaremos un enlace para elegir una contraseña nueva.</p>
+      <p className="mb-4 text-sm text-muted">Te enviaremos un enlace para elegir una contraseña nueva.</p>
       <ActionForm
-        className="space-y-4"
+        className="grid gap-4"
         action={async (data) => {
           await must(
             supabase.auth.resetPasswordForEmail(String(data.get("email")).trim(), {
@@ -22,7 +22,7 @@ export function Recuperar() {
           <label className="label" htmlFor="email">Email</label>
           <input className="input" id="email" name="email" type="email" autoComplete="username" required />
         </div>
-        <button className="btn w-full" type="submit">Enviar enlace</button>
+        <button className="btn mt-2 w-full" type="submit">Enviar enlace</button>
       </ActionForm>
       <p className="mt-4 text-center text-sm"><Link className="link" to="/login">Volver a entrar</Link></p>
     </AuthCard>

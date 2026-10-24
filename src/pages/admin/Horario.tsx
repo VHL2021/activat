@@ -35,18 +35,18 @@ export function Horario() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Horario semanal</h1>
-        <p className="text-sm text-slate-600">Cada clase del horario se repite todas las semanas, salvo en los días cerrados del calendario.</p>
+        <h1 className="page-title">Horario semanal</h1>
+        <p className="page-lead">Cada clase del horario se repite todas las semanas, salvo en los días cerrados del calendario.</p>
       </div>
 
       <section className="card">
-        <h2 className="mb-4 font-semibold">Añadir al horario</h2>
+        <h2 className="section-title mb-4">Añadir al horario</h2>
         {data.classes.length === 0 ? (
-          <p className="text-sm text-slate-600">Primero crea alguna clase en <Link className="link underline" to="/admin/clases">Clases</Link>.</p>
+          <p className="text-sm text-muted">Primero crea alguna clase en <Link className="link" to="/admin/clases">Clases</Link>.</p>
         ) : (
           <ActionForm
             onDone={reload}
-            className="space-y-4"
+            className="grid gap-4"
             action={async (form) => {
               const weekdays = form.getAll("weekdays").map(Number);
               if (weekdays.length === 0) throw new Error("Elige al menos un día.");
@@ -76,15 +76,18 @@ export function Horario() {
             </div>
             <div>
               <span className="label">Días de la semana</span>
-              <div className="flex flex-wrap gap-x-4 gap-y-2">
+              <div className="flex flex-wrap gap-2">
                 {WEEKDAYS.map((day, index) => (
-                  <label key={day} className="flex items-center gap-1.5 text-sm">
-                    <input type="checkbox" name="weekdays" value={index + 1} /> {day}
+                  <label key={day} className="cursor-pointer">
+                    <input className="peer sr-only" type="checkbox" name="weekdays" value={index + 1} />
+                    <span className="inline-flex rounded-full border border-line px-4 py-2 text-sm font-medium transition-colors peer-checked:border-ink peer-checked:bg-ink peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-brand hover:border-ink">
+                      {day}
+                    </span>
                   </label>
                 ))}
               </div>
             </div>
-            <button className="btn" type="submit">Añadir</button>
+            <button className="btn justify-self-start" type="submit">Añadir al horario</button>
           </ActionForm>
         )}
       </section>
@@ -94,20 +97,21 @@ export function Horario() {
           const slots = data.slots.filter((s) => s.weekday === index + 1);
           return (
             <div key={day} className="card p-3">
-              <h3 className="mb-2 font-semibold">{day}</h3>
-              {slots.length === 0 && <p className="text-xs text-slate-500">Sin clases</p>}
+              <h3 className="mb-3 font-display text-2xl leading-none font-extrabold">{day}</h3>
+              {slots.length === 0 && <p className="text-xs text-muted">Sin clases</p>}
               <ul className="space-y-2">
                 {slots.map((slot) => (
-                  <li key={slot.id} className="rounded-md bg-slate-50 p-2 text-sm">
-                    <div className="font-medium">{formatTime(slot.start_time)} · {slot.class_types.name}</div>
-                    <div className="text-xs text-slate-600">
-                      {slot.class_types.duration_min} min · {slot.class_types.capacity} plazas
-                      {slot.class_types.instructor ? ` · ${slot.class_types.instructor}` : ""}
+                  <li key={slot.id} className="rounded-xl bg-paper p-3 text-sm">
+                    <div className="time text-2xl leading-none">{formatTime(slot.start_time)}</div>
+                    <div className="mt-1 font-semibold">{slot.class_types.name}</div>
+                    <div className="text-xs text-muted">
+                      {slot.class_types.duration_min} min, {slot.class_types.capacity} plazas
+                      {slot.class_types.instructor ? `, ${slot.class_types.instructor}` : ""}
                     </div>
-                    {slot.valid_from > today && <div className="text-xs text-amber-700">Empieza el {slot.valid_from}</div>}
-                    {slot.valid_to && <div className="text-xs text-amber-700">Hasta el {slot.valid_to}</div>}
+                    {slot.valid_from > today && <div className="text-xs text-brand-text">Empieza el {slot.valid_from}</div>}
+                    {slot.valid_to && <div className="text-xs text-brand-text">Hasta el {slot.valid_to}</div>}
                     <ActionButton
-                      className="mt-1 text-xs text-red-700 hover:underline"
+                      className="mt-2 text-xs font-medium text-danger hover:underline"
                       confirm="¿Quitar esta clase del horario? Las sesiones futuras sin reservas se borrarán; las que tengan reservas se mantienen."
                       action={() => rpc("admin_remove_slot", { p_id: slot.id }).then(() => undefined)}
                       onDone={reload}

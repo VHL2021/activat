@@ -20,8 +20,8 @@ export function Ajustes() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Ajustes de reservas</h1>
-        <p className="text-sm text-slate-600">Estas reglas se aplican cuando los socios se apuntan o se desapuntan.</p>
+        <h1 className="page-title">Ajustes de reservas</h1>
+        <p className="page-lead">Estas reglas se aplican cuando los socios se apuntan o se desapuntan.</p>
       </div>
       <section className="card">
         <ActionForm
@@ -38,16 +38,16 @@ export function Ajustes() {
               <label className="label" htmlFor={f.name}>{f.label}</label>
               <div className="flex items-center gap-2">
                 <input className="input w-28" id={f.name} name={f.name} type="number" min={f.min} required defaultValue={Number(s[f.name])} />
-                <span className="text-sm text-slate-600">{f.unit}</span>
+                <span className="text-sm text-muted">{f.unit}</span>
               </div>
-              <p className="mt-1 text-xs text-slate-500">{f.help}</p>
+              <p className="mt-1 text-xs text-muted">{f.help}</p>
             </div>
           ))}
           <label className="flex items-start gap-2 text-sm md:col-span-2">
             <input type="checkbox" name="waitlist_enabled" defaultChecked={s.waitlist_enabled} className="mt-1" />
             <span>
               <span className="font-medium">Lista de espera</span>
-              <span className="block text-xs text-slate-500">
+              <span className="block text-xs text-muted">
                 Si una clase está llena, el socio puede ponerse en espera. Cuando alguien se desapunta, entra el primero de la lista.
               </span>
             </span>

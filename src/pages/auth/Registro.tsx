@@ -10,7 +10,7 @@ export function Registro() {
   if (sentTo) {
     return (
       <AuthCard title="Revisa tu correo">
-        <p className="text-sm text-slate-700">
+        <p className="text-sm text-ink-soft">
           Te hemos enviado un email a <strong>{sentTo}</strong>. Abre el enlace para confirmar tu cuenta y después entra
           con tu email y tu contraseña.
         </p>
@@ -21,11 +21,11 @@ export function Registro() {
 
   return (
     <AuthCard title="Crear tu cuenta">
-      <p className="mb-4 text-sm text-slate-600">
+      <p className="mb-4 text-sm text-muted">
         Usa el email que diste en el gimnasio. Si no te deja, pide en recepción que te den de alta.
       </p>
       <ActionForm
-        className="space-y-4"
+        className="grid gap-4"
         action={async (data) => {
           const email = String(data.get("email")).trim().toLowerCase();
           const password = String(data.get("password"));
@@ -52,11 +52,11 @@ export function Registro() {
           <label className="label" htmlFor="repeat">Repite la contraseña</label>
           <input className="input" id="repeat" name="repeat" type="password" autoComplete="new-password" required />
         </div>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted">
           El gimnasio guarda tu nombre, email, teléfono y reservas solo para gestionar las clases. Puedes descargarlos o
           pedir que se borren desde Mi cuenta.
         </p>
-        <button className="btn w-full" type="submit">Crear cuenta</button>
+        <button className="btn mt-2 w-full" type="submit">Crear cuenta</button>
       </ActionForm>
       <p className="mt-4 text-center text-sm"><Link className="link" to="/login">Ya tengo cuenta</Link></p>
     </AuthCard>

@@ -64,12 +64,12 @@ export function Clases() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Clases</h1>
-        <p className="text-sm text-slate-600">Define cada tipo de clase con su aforo. Después la colocas en el horario semanal.</p>
+        <h1 className="page-title">Clases</h1>
+        <p className="page-lead">Define cada tipo de clase con su aforo. Después la colocas en el horario semanal.</p>
       </div>
 
       <section className="card">
-        <h2 className="mb-4 font-semibold">Nueva clase</h2>
+        <h2 className="section-title mb-4">Nueva clase</h2>
         <ActionForm
           resetOnSuccess
           onDone={reload}
@@ -87,7 +87,7 @@ export function Clases() {
 
       <section className="card overflow-x-auto">
         {data.classes.length === 0 ? (
-          <p className="text-sm text-slate-600">Todavía no hay clases.</p>
+          <p className="text-sm text-muted">Todavía no hay clases.</p>
         ) : (
           <table className="table">
             <thead>
@@ -95,7 +95,7 @@ export function Clases() {
             </thead>
             <tbody>
               {data.classes.map((c) => (
-                <tr key={c.id} className={c.active ? "" : "text-slate-400"}>
+                <tr key={c.id} className={c.active ? "" : "text-faint"}>
                   <td className="font-medium">{c.name}</td>
                   <td>{c.instructor}</td>
                   <td>{c.duration_min} min</td>
@@ -130,8 +130,8 @@ export function ClaseEditar() {
 
   return (
     <div className="space-y-6">
-      <Link className="link text-sm" to="/admin/clases">← Volver a clases</Link>
-      <h1 className="text-2xl font-semibold">Editar clase</h1>
+      <Link className="back-link" to="/admin/clases">← Clases</Link>
+      <h1 className="page-title">Editar clase</h1>
       <section className="card">
         <ActionForm
           className="grid gap-4 md:grid-cols-3"
@@ -153,8 +153,8 @@ export function ClaseEditar() {
         </ActionForm>
       </section>
       <section className="card">
-        <h2 className="mb-2 font-semibold">Borrar clase</h2>
-        <p className="mb-3 text-sm text-slate-600">Si la clase ya tiene sesiones, se desactiva en lugar de borrarse, para conservar el historial.</p>
+        <h2 className="section-title mb-2">Borrar clase</h2>
+        <p className="mb-3 text-sm text-muted">Si la clase ya tiene sesiones, se desactiva en lugar de borrarse, para conservar el historial.</p>
         <ActionButton
           className="btn-danger"
           confirm="¿Borrar esta clase?"
