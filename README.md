@@ -1,47 +1,39 @@
-# Reservas del gimnasio
+# Reservas del gimnasio (Activat)
 
-Web para gestionar las clases de un gimnasio: el administrador configura calendario, clases, horario, aforos y socios; los socios reservan sus plazas.
+Web para gestionar las clases de un gimnasio. El administrador configura calendario, clases, horario, aforos y socios; los socios reservan sus plazas.
 
-Estado: panel del administrador y zona de socios terminados. Falta la puesta en marcha (servidor, dominio y envío de emails).
+- **Web**: React + Vite, publicada en GitHub Pages (`.github/workflows/pages.yml`).
+- **Datos y acceso**: Supabase (Frankfurt). Tablas, permisos y reglas en `supabase/migrations/`.
+
+## Cómo se protegen los datos
+
+- En este repositorio solo hay código. Los datos de los socios están en la base de datos de Supabase, nunca aquí.
+- La URL y la clave *publishable* de Supabase son públicas por diseño. Lo que protege los datos son los permisos de la base de datos (RLS): cada socio solo ve su perfil y sus reservas, y solo el administrador ve los listados.
+- Las reservas no se escriben directamente: pasan por funciones (`book_session`, `cancel_booking`, `switch_booking`) que aplican las reglas y bloquean la sesión, para que dos socios no se queden a la vez con la última plaza.
+- Solo puede crear cuenta quien el administrador haya dado de alta antes, y tiene que confirmar su email. Cada persona elige su contraseña; Supabase la guarda cifrada.
+- La clave *secret* de Supabase no se usa en la web y nunca debe subirse al repositorio.
 
 ## Qué hay
 
-### Panel del administrador
+**Administrador**: calendario de días cerrados, clases con aforo, horario semanal, sesiones con lista de apuntados y de espera (descargable para Excel), altas y bajas de socios, y ajustes de las reglas de reserva.
 
-- **Calendario**: festivos, vacaciones y días cerrados (un día o un rango). Las sesiones de esos días se cancelan solas.
-- **Clases**: nombre, monitor, duración y aforo máximo.
-- **Horario semanal**: cada clase en uno o varios días y a una hora; la web crea las sesiones de cada semana.
-- **Sesiones**: vista por semanas, lista de apuntados y lista de espera, cambiar el aforo, cancelar, apuntar o desapuntar socios, sesiones puntuales y descarga de la lista para Excel.
-- **Socios**: alta con contraseña temporal, edición, desactivar, nueva contraseña, borrado (RGPD) y listado para Excel.
-- **Ajustes**: reglas de reserva que se aplicarán a los socios (antelación, plazos, límites, lista de espera, aforo por defecto).
+**Socios**: horario con plazas libres, apuntarse o entrar en lista de espera, desapuntarse dentro del plazo, cambiar de clase en un solo paso, cambiar contraseña y teléfono, y descargar sus datos (RGPD).
 
-### Zona de socios
+## Desarrollo en local
 
-- **Horario**: clases de los próximos días con las plazas libres; apuntarse o entrar en la lista de espera.
-- **Mis clases**: desapuntarse (dentro del plazo) o cambiar a otra clase con hueco en un solo paso.
-- **Mi cuenta**: cambiar la contraseña y el teléfono, y descargar sus datos (RGPD).
-- Se aplican las reglas de Ajustes: antelación, cierre de reservas, plazo para desapuntarse, límites por socio y por día y lista de espera. Si alguien deja una plaza, entra el primero de la lista de espera.
-
-## Privacidad
-
-- En el repositorio solo hay código. Los datos de los socios están solo en la base de datos del servidor.
-- Las contraseñas se guardan con Argon2 (no se pueden leer). Tras 5 intentos fallidos la cuenta se bloquea 15 minutos.
-- La sesión va en una cookie cifrada, `httpOnly` y solo por HTTPS en producción.
-- Las claves van en `.env.local` (o en las variables del servidor), que nunca se sube al repositorio.
-
-## Puesta en marcha (desarrollo)
-
-Necesitas Node.js 22 y PostgreSQL.
+Necesitas Node.js 22 y Docker.
 
 ```bash
 npm install
-cp .env.example .env.local      # y rellena DATABASE_URL y SESSION_PASSWORD
-npm run db:migrate              # crea las tablas
-npm run create-admin -- tu@email.com "Tu nombre" una-contraseña
-npm run seed:demo               # opcional: datos inventados para probar
-npm run dev                     # http://localhost:3000
+npm run db:start                # Supabase local, con datos de ejemplo (supabase/seed.sql)
+cp .env.example .env.local      # pon en VITE_SUPABASE_KEY la PUBLISHABLE_KEY que muestra "npx supabase status"
+npm run dev                     # http://localhost:5173
 ```
 
-## Tecnología
+Los emails de confirmación y de recuperar contraseña se ven en http://127.0.0.1:54324. Las cuentas de ejemplo (`admin@ejemplo.com`, `laura@ejemplo.com`…) se crean desde `/registro`.
 
-Next.js 16 (TypeScript), PostgreSQL con `pg`, `iron-session` para la sesión, `@node-rs/argon2` para las contraseñas y Tailwind CSS.
+Pruebas de permisos: `ANON=… SERVICE=… npm run test:db` con las claves de `npx supabase status`.
+
+## Puesta en marcha
+
+Los pasos para el proyecto de Supabase y GitHub Pages están en la guía de puesta en marcha del proyecto.
