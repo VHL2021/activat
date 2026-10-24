@@ -7,6 +7,7 @@ export type Profile = {
   phone: string | null;
   role: Role;
   active: boolean;
+  avatar: string | null;
 };
 
 export type Settings = {
@@ -17,6 +18,7 @@ export type Settings = {
   max_per_day: number;
   waitlist_enabled: boolean;
   default_capacity: number;
+  time_slots: string[];
 };
 
 export type ClassType = {

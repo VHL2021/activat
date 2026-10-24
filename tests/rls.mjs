@@ -31,6 +31,12 @@ check(!!(await laura.rpc("admin_set_capacity", { p_session_id: 1, p_capacity: 99
 check(!!(await laura.rpc("promote_waitlist", { p_session_id: 1 })).error, "funciones internas no accesibles");
 check(!!(await laura.from("bookings").insert({ session_id: 1, user_id: (await laura.auth.getUser()).data.user.id, status: "booked" })).error, "no se puede reservar saltándose las reglas");
 
+check(!(await laura.rpc("update_my_phone", { p_phone: "600000000" })).error, "un socio cambia su teléfono");
+check(!(await laura.rpc("update_my_avatar", { p_avatar: "data:image/jpeg;base64,AAAA" })).error, "un socio pone su foto");
+check(!!(await laura.rpc("update_my_avatar", { p_avatar: "javascript:alert(1)" })).error, "solo se aceptan fotos JPEG");
+check((await laura.from("profiles").select("avatar").single()).data.avatar.startsWith("data:image/jpeg"), "la foto se guarda en su perfil");
+check((await jorge.from("profiles").select("avatar")).data.every((p) => !p.avatar), "otro socio no ve esa foto");
+
 const today = new Date().toISOString().slice(0, 10);
 const in7 = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
 await laura.rpc("ensure_sessions", { p_from: today, p_to: in7 });

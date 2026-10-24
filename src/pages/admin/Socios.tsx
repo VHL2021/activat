@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { ActionButton, ActionForm, ErrorBox, Loading } from "../../components/ActionForm";
+import { Avatar } from "../../components/Brand";
 import { useAuth } from "../../lib/auth";
 import { downloadCsv } from "../../lib/csv";
 import { addDays, formatDate, formatTime, todayISO } from "../../lib/dates";
@@ -137,7 +138,7 @@ export function Socios() {
             <tbody>
               {profiles.map((p) => (
                 <tr key={p.id} className={p.active ? "" : "text-faint"}>
-                  <td className="font-medium">{p.name}{!p.active && " (desactivado)"}</td>
+                  <td className="font-medium"><span className="flex items-center gap-3"><Avatar name={p.name} src={p.avatar} />{p.name}{!p.active && " (desactivado)"}</span></td>
                   <td>{p.email}</td>
                   <td>{p.phone}</td>
                   <td>{roleLabel(p.role)}</td>
@@ -182,7 +183,10 @@ export function SocioDetalle() {
     <div className="space-y-6">
       <Link className="back-link" to="/admin/socios">← Socios</Link>
       <div>
-        <h1 className="page-title">{member.name}</h1>
+        <div className="flex items-center gap-4">
+          <Avatar name={member.name} src={member.avatar} className="size-16 text-xl" />
+          <h1 className="page-title">{member.name}</h1>
+        </div>
         <p className="page-lead">{member.email}</p>
       </div>
 

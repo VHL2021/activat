@@ -1,27 +1,30 @@
 @import "tailwindcss";
-@import "@fontsource-variable/big-shoulders-display";
+@import "@fontsource-variable/fraunces/soft.css";
 @import "@fontsource-variable/figtree";
 
-/* Colores de la Ribera: hoja de naranjo y mandarina. Las fuentes van dentro de la web (no se pide nada a Google). */
+/* Colores del logo de Activa't: azul cielo y arena, con azul marino para el texto.
+   Las fuentes van dentro de la web (no se pide nada a Google). */
 @theme {
   --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Big Shoulders Display Variable", "Arial Narrow", sans-serif;
+  --font-display: "Fraunces Variable", Georgia, serif;
 
-  --color-paper: #f3f5f1;
+  --color-paper: #f2f5f9;
   --color-surface: #ffffff;
-  --color-ink: #10302a;
-  --color-ink-soft: #2e4a43;
-  --color-muted: #586a63;
-  --color-faint: #93a39c;
-  --color-line: #d8e0da;
-  --color-line-soft: #e8ede9;
-  --color-leaf: #1d4a3f;
-  --color-brand: #f26a1b;
-  --color-brand-deep: #d4550a;
-  --color-brand-tint: #ffeadb;
-  --color-brand-text: #9a3d06;
-  --color-danger: #c42a3f;
-  --color-danger-tint: #fce8eb;
+  --color-ink: #1a2838;
+  --color-ink-soft: #34485e;
+  --color-muted: #5b6d80;
+  --color-faint: #98a7b7;
+  --color-line: #d9e1ea;
+  --color-line-soft: #eaeff5;
+  --color-sky: #95b4d1;
+  --color-sky-tint: #e5edf6;
+  --color-sky-deep: #3d6893;
+  --color-sand: #ead5a6;
+  --color-sand-deep: #d8bb7a;
+  --color-sand-tint: #f8f0de;
+  --color-sand-text: #775819;
+  --color-danger: #be3647;
+  --color-danger-tint: #fbe9eb;
 }
 
 html {
@@ -39,13 +42,13 @@ input[type="checkbox"] {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-brand);
+  outline: 2px solid var(--color-sky-deep);
   outline-offset: 2px;
 }
 
 @layer components {
   .page-title {
-    @apply font-display text-4xl leading-none font-extrabold tracking-tight text-ink sm:text-5xl;
+    @apply font-display text-4xl leading-none font-black tracking-tight text-ink sm:text-5xl;
   }
   .page-lead {
     @apply mt-2 max-w-prose text-[15px] text-muted;
@@ -54,13 +57,13 @@ input[type="checkbox"] {
     @apply text-lg font-semibold tracking-tight text-ink;
   }
   .input {
-    @apply w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-[15px] text-ink transition-colors placeholder:text-faint hover:border-faint focus:border-ink focus:ring-2 focus:ring-brand/30 focus:outline-none disabled:bg-paper disabled:text-muted;
+    @apply w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-[15px] text-ink transition-colors placeholder:text-faint hover:border-faint focus:border-ink focus:ring-2 focus:ring-sky/40 focus:outline-none disabled:bg-paper disabled:text-muted;
   }
   .label {
     @apply mb-1.5 block text-sm font-medium text-ink-soft;
   }
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-2.5 text-[15px] font-semibold text-ink transition-colors hover:bg-brand-deep hover:text-white active:translate-y-px disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-2.5 text-[15px] font-semibold text-white transition-colors hover:bg-sky-deep active:translate-y-px disabled:opacity-50;
   }
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-surface px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-ink disabled:opacity-50;
@@ -84,22 +87,34 @@ input[type="checkbox"] {
     @apply border-b-0;
   }
   .link {
-    @apply font-medium text-ink underline decoration-brand decoration-2 underline-offset-4 hover:decoration-ink;
+    @apply font-medium text-ink underline decoration-sky decoration-2 underline-offset-4 hover:decoration-ink;
   }
   .back-link {
     @apply flex w-fit items-center gap-1 text-sm font-medium text-muted hover:text-ink;
   }
   .notice {
-    @apply rounded-xl border-l-4 border-leaf bg-surface px-4 py-3 text-sm text-ink;
+    @apply rounded-xl border-l-4 border-sky bg-surface px-4 py-3 text-sm text-ink;
   }
   .notice-warn {
-    @apply rounded-xl border-l-4 border-brand bg-brand-tint px-4 py-3 text-sm text-brand-text;
+    @apply rounded-xl border-l-4 border-sand-deep bg-sand-tint px-4 py-3 text-sm text-sand-text;
   }
   .tag {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
   }
+  .btn-sand {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-sand px-5 py-2.5 text-[15px] font-semibold text-ink transition-colors hover:bg-sand-deep active:translate-y-px disabled:opacity-50;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full border border-line bg-surface px-3.5 py-1.5 text-sm font-medium text-ink-soft transition-colors hover:border-ink;
+  }
+  .chip-on {
+    @apply border-ink bg-ink text-white hover:border-ink;
+  }
+  .icon-btn {
+    @apply inline-flex size-9 items-center justify-center rounded-full border border-line bg-surface text-ink transition-colors hover:border-ink disabled:opacity-30 disabled:hover:border-line;
+  }
   .time {
-    @apply font-display font-extrabold tabular-nums;
+    @apply font-display font-black tabular-nums;
   }
 }
 
