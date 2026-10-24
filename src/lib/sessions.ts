@@ -1,4 +1,5 @@
 import "server-only";
+import { TIME_ZONE } from "./dates";
 import { query, queryOne } from "./db";
 
 export type SessionRow = {
@@ -46,5 +47,31 @@ export function listParticipants(sessionId: number) {
      FROM bookings b JOIN users u ON u.id = b.user_id
      WHERE b.session_id = $1 ORDER BY b.created_at`,
     [sessionId],
+  );
+}
+
+export type MemberSessionRow = SessionRow & {
+  my_status: "booked" | "waitlist" | null;
+  waitlist_position: number | null;
+  minutes_until: number;
+};
+
+// Sesiones vistas por un socio: plazas, su reserva y su posición en la lista de espera.
+export function listMemberSessions(userId: number, from: string, to: string, onlyMine = false) {
+  return query<MemberSessionRow>(
+    `SELECT * FROM (
+       SELECT x.*, b.status AS my_status,
+         CASE WHEN b.status = 'waitlist' THEN
+           (SELECT count(*)::int FROM bookings w WHERE w.session_id = x.id AND w.status = 'waitlist'
+              AND w.created_at <= b.created_at)
+         END AS waitlist_position,
+         (extract(epoch FROM ((x.day + x.start_time) AT TIME ZONE $4) - now()) / 60)::float8 AS minutes_until
+       FROM (${SESSION_SELECT}) x
+       LEFT JOIN bookings b ON b.session_id = x.id AND b.user_id = $1 AND b.status IN ('booked', 'waitlist')
+       WHERE x.day BETWEEN $2 AND $3
+     ) t
+     WHERE minutes_until > 0 AND (NOT $5 OR my_status IS NOT NULL)
+     ORDER BY day, start_time`,
+    [userId, from, to, TIME_ZONE, onlyMine],
   );
 }
