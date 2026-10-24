@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from "react-router";
 import { useAuth } from "../lib/auth";
 import { supabase } from "../lib/supabase";
-import { Logo } from "./Brand";
+import { Avatar, Logo } from "./Brand";
 
 type Link = { to: string; label: string; end?: boolean };
 
@@ -16,7 +16,7 @@ const ADMIN_LINKS: Link[] = [
 ];
 
 const SOCIO_LINKS: Link[] = [
-  { to: "/socio", label: "Horario", end: true },
+  { to: "/socio", label: "Reservar", end: true },
   { to: "/socio/mis-clases", label: "Mis clases" },
   { to: "/socio/cuenta", label: "Mi cuenta" },
 ];
@@ -30,7 +30,7 @@ export function AdminLayout() {
       {/* Escritorio: barra lateral. Móvil: cabecera con el menú deslizable. */}
       <aside className="sticky top-0 z-20 bg-ink text-white md:h-screen">
         <div className="flex items-center justify-between px-4 pt-4 pb-3 md:px-6 md:pt-7 md:pb-8">
-          <NavLink to="/admin" className="text-3xl"><Logo tone="light" /></NavLink>
+          <NavLink to="/admin" className="text-[34px]"><Logo /></NavLink>
           <button className="text-sm font-medium text-white/70 hover:text-white md:hidden" type="button" onClick={signOut}>Salir</button>
         </div>
         <nav className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:px-3 md:pb-0" aria-label="Administración">
@@ -41,7 +41,7 @@ export function AdminLayout() {
               end={link.end}
               className={({ isActive }) =>
                 `shrink-0 rounded-full px-4 py-2 text-[15px] font-medium transition-colors md:rounded-lg ${
-                  isActive ? "bg-brand text-ink" : "text-white/75 hover:bg-white/10 hover:text-white"
+                  isActive ? "bg-sand font-semibold text-ink" : "text-white/75 hover:bg-white/10 hover:text-white"
                 }`
               }
             >
@@ -50,7 +50,10 @@ export function AdminLayout() {
           ))}
         </nav>
         <div className="absolute inset-x-0 bottom-0 hidden border-t border-white/10 px-6 py-5 md:block">
-          <p className="truncate text-sm font-medium">{profile?.name}</p>
+          <div className="flex items-center gap-3">
+            {profile && <Avatar name={profile.name} src={profile.avatar} />}
+            <p className="truncate text-sm font-medium">{profile?.name}</p>
+          </div>
           <div className="mt-2 flex gap-4 text-sm text-white/70">
             <NavLink className="hover:text-white" to="/socio">Ver como socio</NavLink>
             <button className="hover:text-white" type="button" onClick={signOut}>Salir</button>
@@ -68,7 +71,7 @@ export function SocioLayout() {
     <div className="min-h-screen pb-24 sm:pb-0">
       <header className="border-b border-line bg-surface">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
-          <NavLink to="/socio" className="text-[28px]"><Logo /></NavLink>
+          <NavLink to="/socio" className="text-[30px]"><Logo /></NavLink>
           <nav className="hidden gap-1 sm:flex" aria-label="Zona de socios">
             {SOCIO_LINKS.map((link) => (
               <NavLink
@@ -86,6 +89,11 @@ export function SocioLayout() {
           <div className="flex items-center gap-4 text-sm font-medium">
             {profile?.role === "admin" && <NavLink className="text-muted hover:text-ink" to="/admin">Administración</NavLink>}
             <button className="text-muted hover:text-ink" type="button" onClick={signOut}>Salir</button>
+            {profile && (
+              <NavLink to="/socio/cuenta" aria-label="Mi cuenta">
+                <Avatar name={profile.name} src={profile.avatar} />
+              </NavLink>
+            )}
           </div>
         </div>
       </header>
@@ -107,7 +115,7 @@ export function SocioLayout() {
           >
             {({ isActive }) => (
               <>
-                <span className={`h-1 w-8 rounded-full ${isActive ? "bg-brand" : "bg-transparent"}`} />
+                <span className={`h-1 w-8 rounded-full ${isActive ? "bg-sky" : "bg-transparent"}`} />
                 {link.label}
               </>
             )}

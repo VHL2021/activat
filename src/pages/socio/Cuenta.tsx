@@ -1,5 +1,6 @@
 import { ActionForm } from "../../components/ActionForm";
 import { useAuth } from "../../lib/auth";
+import { AvatarPicker } from "./AvatarPicker";
 import { downloadFile } from "../../lib/csv";
 import { must, rpc, supabase } from "../../lib/supabase";
 
@@ -12,9 +13,8 @@ export function Cuenta() {
       <h1 className="page-title">Mi cuenta</h1>
 
       <section className="card">
-        <h2 className="section-title">Mis datos</h2>
-        <p className="mt-3 text-lg font-semibold">{profile.name}</p>
-        <p className="mb-4 text-sm text-muted">{profile.email}</p>
+        <AvatarPicker />
+        <p className="mt-2 mb-4 text-xs text-muted">Tu foto solo la ves tú y el gimnasio.</p>
         <ActionForm
           onDone={refreshProfile}
           className="flex flex-wrap items-end gap-3"

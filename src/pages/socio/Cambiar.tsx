@@ -33,7 +33,7 @@ export function Cambiar() {
         lead="Elige la nueva clase. Solo aparecen las que tienen plazas libres, y no pierdes tu plaza actual hasta que el cambio se hace."
       />
       <div className="flex items-center gap-4 rounded-2xl bg-ink p-4 text-white">
-        <span className="time text-4xl leading-none text-brand">{formatTime(current.start_time)}</span>
+        <span className="time text-4xl leading-none text-sand">{formatTime(current.start_time)}</span>
         <div>
           <div className="text-sm text-white/70">Ahora estás en</div>
           <div className="font-semibold">{current.class_name}, {formatDate(current.day).toLowerCase()}</div>

@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router";
 import { ActionButton, ActionForm, ErrorBox, Loading } from "../../components/ActionForm";
-import { CapacityMeter } from "../../components/Brand";
+import { Avatar, CapacityMeter } from "../../components/Brand";
 import { downloadCsv } from "../../lib/csv";
 import { formatDate, formatTime, mondayOf } from "../../lib/dates";
 import { intField, must, rpc, supabase } from "../../lib/supabase";
@@ -11,7 +11,7 @@ type Participant = {
   id: number;
   status: "booked" | "waitlist" | "cancelled";
   created_at: string;
-  profiles: { id: string; name: string; email: string; phone: string | null };
+  profiles: { id: string; name: string; email: string; phone: string | null; avatar: string | null };
 };
 
 const STATUS_LABELS = { booked: "Apuntado", waitlist: "Lista de espera", cancelled: "Desapuntado" };
@@ -21,7 +21,7 @@ export function SesionDetalle() {
   const { data, error, reload } = useData(async () => {
     const [session, participants, members] = await Promise.all([
       must(supabase.from("session_overview").select().eq("id", id).single()),
-      must(supabase.from("bookings").select("id, status, created_at, profiles(id, name, email, phone)").eq("session_id", id).order("created_at")),
+      must(supabase.from("bookings").select("id, status, created_at, profiles(id, name, email, phone, avatar)").eq("session_id", id).order("created_at")),
       must(supabase.from("profiles").select("id, name, email").eq("active", true).order("name")),
     ]);
     return {
@@ -114,6 +114,20 @@ export function SesionDetalle() {
         </ActionForm>
       </section>
 
+      <section className="card" aria-label="Plazas">
+        <div className="flex flex-wrap gap-2">
+          {booked.slice(0, session.capacity).map((p) => (
+            <div key={p.id} className="w-16 text-center">
+              <Avatar name={p.profiles.name} src={p.profiles.avatar} className="mx-auto size-14 text-base !rounded-2xl" />
+              <p className="mt-1 truncate text-[11px] font-medium">{p.profiles.name.split(" ")[0]}</p>
+            </div>
+          ))}
+          {Array.from({ length: Math.max(session.capacity - booked.length, 0) }, (_, i) => (
+            <div key={i} className="w-16"><div className="mx-auto size-14 rounded-2xl border-2 border-dashed border-line" /></div>
+          ))}
+        </div>
+      </section>
+
       <ParticipantTable title={`Apuntados (${booked.length})`} rows={booked} onRemove={reload} />
       {waitlist.length > 0 && <ParticipantTable title={`Lista de espera (${waitlist.length})`} rows={waitlist} onRemove={reload} numbered />}
 
@@ -164,7 +178,7 @@ function ParticipantTable({ title, rows, onRemove, numbered }: {
             {rows.map((p, index) => (
               <tr key={p.id}>
                 {numbered && <td>{index + 1}</td>}
-                <td className="font-medium">{p.profiles.name}</td>
+                <td className="font-medium"><span className="flex items-center gap-3"><Avatar name={p.profiles.name} src={p.profiles.avatar} />{p.profiles.name}</span></td>
                 <td>{p.profiles.email}</td>
                 <td>{p.profiles.phone}</td>
                 {onRemove && (
